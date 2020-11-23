@@ -1,0 +1,106 @@
+
+local game_messages = require('scripts.start_modules.game_messages')
+local config = require('scripts.start_modules.config')
+local gui_constants = require('scripts.start_modules.gui_constants')
+local game_components = require('scripts.start_modules.game_components')
+
+local function create_hearts()
+	
+	local start_pos_x = config.start_pos_hearts.x 
+	local pos_spawn_hearts = vmath.vector3(config.start_pos_hearts.x, config.start_pos_hearts.y, 0)
+
+	for i = 1, config.count_hearts do
+		
+		local node = gui.new_box_node(pos_spawn_hearts,config.size_heart)
+		gui_constants.arr_hearts[i] = node
+		
+		gui.set_texture(node, game_components.anim_hearts)
+		gui.play_flipbook(node, game_components.idle)
+		gui.set_xanchor(node, gui_constants.anchor_right)
+		gui.set_yanchor(node, gui_constants.anchor_top)
+		gui.animate(node, game_messages.scale, 1.3, gui.EASING_LINEAR, 2, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+		
+		pos_spawn_hearts.x = pos_spawn_hearts.x - config.space_hearts_x
+		
+		if i % config.maximum_line_hearts == 0 then
+			pos_spawn_hearts.y = pos_spawn_hearts.y - config.space_hearts_y	
+			pos_spawn_hearts.x = start_pos_x
+		end
+	end
+end
+
+local function restart_game()
+	msg.post(game_components.restart_level, game_messages.reset_level)
+end
+
+local function delete_heart(node)
+	gui.set_enabled(node, false)
+end
+
+local function check_lose()
+	print(config.count_hearts)
+	
+	if config.count_hearts > 0 then
+		local node = gui_constants.arr_hearts[#gui_constants.arr_hearts]
+		config.count_hearts = config.count_hearts - 1
+		gui_constants.arr_hearts[#gui_constants.arr_hearts] = nil
+		
+		gui.animate(node, game_messages.scale, 0.1, gui.EASING_LINEAR, 0.3, 0, function()
+				delete_heart(node) 
+			end, gui.PLAYBACK_ONCE_FORWARD)
+			
+		if config.count_hearts == 0 then
+			restart_game()
+			config.count_hearts = config.count_hearts - 1
+		end
+	end
+end
+
+local function animation_score(self)
+	if self.update_score > gui_constants.start_score then
+		gui_constants.start_score = gui_constants.start_score + 1
+
+		local node = gui.get_node(game_components.label_score)
+		gui.set_text(node, gui_constants.start_score)
+	end
+end
+
+local function delete_score(self)
+	self.update_score = 0
+	gui_constants.start_score = 0
+	local node = gui.get_node(game_components.label_score)
+	gui.set_text(node, gui_constants.start_score)
+end
+
+local function show_score_increase(message)
+	local node = gui.new_text_node(message.death_pos,config.arr_sprites[message.num_sprite].price)
+	gui.animate(node, game_messages.scale, 3, gui.EASING_LINEAR, 1.5, 0, function() gui.delete_node(node) end)
+end
+
+function init(self)
+	self.update_score = 0
+	
+	create_hearts()
+end
+
+function update(self, dt)
+	animation_score(self)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == game_messages.change_score then
+		self.update_score = self.update_score + config.arr_sprites[message.num_sprite].price
+		show_score_increase(message)
+	end
+	if message_id == game_messages.reduce_lives then
+		check_lose()
+	end
+	if message_id == game_messages.restart_data then
+		create_hearts()
+		delete_score(self)
+	end
+end
+
+
+
+

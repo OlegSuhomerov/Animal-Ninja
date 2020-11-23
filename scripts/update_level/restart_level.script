@@ -1,0 +1,35 @@
+
+local config = require('scripts.start_modules.config')
+local game_messages = require('scripts.start_modules.game_messages')
+local go_constants = require('scripts.start_modules.go_constants')
+local game_components = require('scripts.start_modules.game_components')
+
+function init(self)
+	self.gravity = config.gravity
+	self.pause_in_sec = config.pause_in_sec
+	self.respawn_time = config.respawn_time
+	self.arr_group_go = config.arr_group_go
+	self.count_hearts = config.count_hearts
+	self.group_number = go_constants.group_number
+end
+
+local function returning_original_data(self)
+	msg.post(game_components.gui, game_messages.restart_data)
+	config.gravity = self.gravity
+	config.pause_in_sec = self.pause_in_sec
+	config.respawn_time = self.respawn_time
+	config.arr_group_go = self.arr_group_go
+	config.count_hearts = self.count_hearts
+	go_constants.group_number = self.group_number
+	go_constants.level_play = true
+	timer.cancel(self.id_timer)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == game_messages.reset_level then
+		go_constants.level_play = false
+		self.id_timer = timer.delay(config.pause_between_levels, false, function()
+			returning_original_data(self)
+		end)
+	end
+end

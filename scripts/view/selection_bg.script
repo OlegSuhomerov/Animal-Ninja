@@ -1,0 +1,9 @@
+
+local config = require('scripts.start_modules.config')
+local game_messages = require('scripts.start_modules.game_messages')
+local game_components = require('scripts.start_modules.game_components')
+
+function init(self)
+	local rand_num_bg = math.random(#config.arr_bg)
+	msg.post(game_components.bg_sprite, game_messages.play_animation, {id = config.arr_bg[rand_num_bg]})
+end

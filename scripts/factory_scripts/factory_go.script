@@ -1,0 +1,73 @@
+
+local config = require('scripts.start_modules.config')
+local rendercam = require('rendercam.rendercam')
+local game_messages = require('scripts.start_modules.game_messages')
+local go_constants = require('scripts.start_modules.go_constants')
+local game_components = require('scripts.start_modules.game_components')
+local random_sampling = require('scripts.service.random_sampling')
+
+
+local function pause(self)
+	if self.time >= config.pause_in_sec then
+		self.count_created = 0
+		go_constants.group_number = go_constants.group_number  + 1
+	end
+end
+
+local function sampling_random_spawn_settings(self)
+	local start_arr = config.spawn_from_data
+
+	local i = random_sampling.based_weights(start_arr)
+	local pos_spawn = start_arr[i].start_pos
+	local start_angle = start_arr[i].starting_angle
+	local start_speed = start_arr[i].starting_speed
+	
+	local rand_x = math.random(pos_spawn.min_x * rendercam.window.x, pos_spawn.max_x * rendercam.window.x)
+	local rand_y = math.random(pos_spawn.min_y * rendercam.window.y, pos_spawn.max_y * rendercam.window.y)
+	local rand_angle = math.random(start_angle.min, start_angle.max)
+	local rand_speed = math.random(start_speed.min, start_speed.max)
+	
+	go_constants.start_pos = rendercam.screen_to_world_2d(rand_x, rand_y, false)
+	go_constants.starting_angle = math.rad(rand_angle)
+	go_constants.starting_speed = rand_speed
+end
+
+function init(self)
+	self.time = 0
+	self.count_created = 0
+end
+
+function update(self, dt)
+	self.time = self.time + dt
+
+	local group_number = go_constants.group_number
+	local arr_group_go = config.arr_group_go
+	local next_cell = group_number + 1
+	
+	if arr_group_go[next_cell] == nil then
+		local rand_group = math.random(group_number - 1)
+
+		local min_rand = arr_group_go[group_number - rand_group]
+		local max_rand = arr_group_go[group_number]
+		
+		if min_rand > max_rand then
+			min_rand = arr_group_go[group_number]
+			max_rand = arr_group_go[group_number - rand_group]
+		end
+		
+		arr_group_go[next_cell] = math.random(min_rand, max_rand)
+	end
+	
+	while config.respawn_time/self.time <= 1 
+	and self.count_created ~= arr_group_go[group_number] 
+	and go_constants.level_play do
+
+		self.time = 0 
+		self.count_created = self.count_created + 1
+		
+		sampling_random_spawn_settings(self)
+
+		factory.create(game_components.factory_go, go_constants.start_pos, nil, nil, config.start_scale)
+	end
+	pause(self)
+end

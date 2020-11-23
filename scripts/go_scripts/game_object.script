@@ -1,0 +1,48 @@
+
+local rendercam = require('rendercam.rendercam')
+local config = require('scripts.start_modules.config')
+local game_messages = require('scripts.start_modules.game_messages')
+local go_constants = require('scripts.start_modules.go_constants')
+local game_components = require('scripts.start_modules.game_components')
+local input = require("scripts.modules.input")
+local deleting_object = require("scripts.modules.deleting_object")
+local selecting_animation = require("scripts.modules.selecting_animation")
+
+local function update_object_position(self, dt)
+
+	self.time = self.time + dt
+
+	local x_speed = self.starting_speed * math.cos(self.starting_angle)
+	local y_speed = self.starting_speed * math.sin(self.starting_angle)
+
+	self.pos.x = self.pos.x + x_speed * dt
+	self.pos.y = self.pos.y + y_speed * dt - config.gravity * self.time
+
+	go.set_position(self.pos)
+end
+
+function init(self)
+	msg.post(".", game_messages.acquire_input_focus)
+
+	selecting_animation.random_sprite(self)
+	selecting_animation.random_animation(self)
+		
+	self.time = 0
+	self.pos = go_constants.start_pos
+	self.starting_angle = go_constants.starting_angle
+	self.starting_speed = go_constants.starting_speed
+	self.sprite_size = go.get(game_components.sprite_go, game_messages.size)
+end
+
+function final(self)
+	msg.post(".", game_messages.release_input_focus)
+end
+
+function update(self, dt)
+	update_object_position(self, dt)
+	deleting_object.frame_check(self)
+end
+
+function on_input(self, action_id, action)
+	input.swipe(self, action_id, action)
+end
