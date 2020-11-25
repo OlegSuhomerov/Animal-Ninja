@@ -1,15 +1,11 @@
 script: "/scripts/gui_scripts/health_and_score.gui_script"
 fonts {
-  name: "system_font"
-  font: "/builtins/fonts/system_font.font"
+  name: "Lucida"
+  font: "/assests/fonts/Lucida.font"
 }
 textures {
   name: "atlas_gaming_level"
   texture: "/assests/atlas/atlas_gaming_level.atlas"
-}
-textures {
-  name: "anim_hearts"
-  texture: "/assests/atlas/anim_hearts.atlas"
 }
 background_color {
   x: 0.0
@@ -85,14 +81,14 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 2.0
-    y: 2.0
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
   size {
-    x: 100.0
-    y: 50.0
+    x: 200.0
+    y: 100.0
     z: 0.0
     w: 1.0
   }
@@ -105,7 +101,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: "0"
-  font: "system_font"
+  font: "Lucida"
   id: "label_score"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

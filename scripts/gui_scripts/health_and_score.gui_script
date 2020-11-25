@@ -3,6 +3,8 @@ local game_messages = require('scripts.start_modules.game_messages')
 local config = require('scripts.start_modules.config')
 local gui_constants = require('scripts.start_modules.gui_constants')
 local game_components = require('scripts.start_modules.game_components')
+local scenes = require('scripts.start_modules.scenes')
+local loader_scenes = require('scripts.modules.loader_scenes')
 
 local function create_hearts()
 	
@@ -14,8 +16,8 @@ local function create_hearts()
 		local node = gui.new_box_node(pos_spawn_hearts,config.size_heart)
 		gui_constants.arr_hearts[i] = node
 		
-		gui.set_texture(node, game_components.anim_hearts)
-		gui.play_flipbook(node, game_components.idle)
+		gui.set_texture(node, game_components.atlas_gaming_level)
+		gui.play_flipbook(node, game_components.heart)
 		gui.set_xanchor(node, gui_constants.anchor_right)
 		gui.set_yanchor(node, gui_constants.anchor_top)
 		gui.animate(node, game_messages.scale, 1.3, gui.EASING_LINEAR, 2, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
@@ -38,7 +40,6 @@ local function delete_heart(node)
 end
 
 local function check_lose()
-	print(config.count_hearts)
 	
 	if config.count_hearts > 0 then
 		local node = gui_constants.arr_hearts[#gui_constants.arr_hearts]
@@ -50,6 +51,7 @@ local function check_lose()
 			end, gui.PLAYBACK_ONCE_FORWARD)
 			
 		if config.count_hearts == 0 then
+			loader_scenes.show_scene(scenes.popup_restart)
 			restart_game()
 			config.count_hearts = config.count_hearts - 1
 		end
@@ -58,7 +60,7 @@ end
 
 local function animation_score(self)
 	if self.update_score > gui_constants.start_score then
-		gui_constants.start_score = gui_constants.start_score + 1
+		gui_constants.start_score = gui_constants.start_score + self.growth_rate
 
 		local node = gui.get_node(game_components.label_score)
 		gui.set_text(node, gui_constants.start_score)
@@ -74,12 +76,11 @@ end
 
 local function show_score_increase(message)
 	local node = gui.new_text_node(message.death_pos,config.arr_sprites[message.num_sprite].price)
-	gui.animate(node, game_messages.scale, 3, gui.EASING_LINEAR, 1.5, 0, function() gui.delete_node(node) end)
+	gui.animate(node, game_messages.scale, 1.5, gui.EASING_LINEAR, 1, 0, function() gui.delete_node(node) end)
 end
 
 function init(self)
 	self.update_score = 0
-	
 	create_hearts()
 end
 
@@ -90,6 +91,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == game_messages.change_score then
 		self.update_score = self.update_score + config.arr_sprites[message.num_sprite].price
+		self.growth_rate = (self.update_score - gui_constants.start_score) / 10
 		show_score_increase(message)
 	end
 	if message_id == game_messages.reduce_lives then

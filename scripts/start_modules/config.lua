@@ -6,9 +6,6 @@ local config = {}
 
 -- Config
 config.count_sprite = 13
-config.left_border = 0
-config.bottom_border = 0
-config.right_border = rendercam.window.x
 config.start_scale = 0.7
 config.arr_group_go = {2,3,3,4,4,5,6,7,8,9,10}
 config.gravity = 8
@@ -20,7 +17,7 @@ config.min_swipe_distance = 50
 config.count_hearts = 3
 config.maximum_line_hearts = 5
 config.start_pos_hearts = vmath.vector3(1076,590,0)
-config.size_heart = vmath.vector3(60,53.4,0)
+config.size_heart = vmath.vector3(60,53.0,0)
 config.space_hearts_x = 90
 config.space_hearts_y = 90
 config.score_for_one = 100

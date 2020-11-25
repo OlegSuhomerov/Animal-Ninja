@@ -20,5 +20,6 @@ game_messages.reduce_lives = hash("reduce_lives")
 game_messages.reset_level= hash("reset_level")
 game_messages.restart_data = hash("restart_data")
 game_messages.change_score = hash("change_score")
+game_messages.show_start_scenes = hash("show_start_scenes")
 
 return game_messages

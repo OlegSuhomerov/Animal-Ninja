@@ -41,12 +41,13 @@ function input.swipe(self, action_id, action)
 		if is_colliding(arr_pos_go) then
 
 			end_pos = action_pos
-
-			local distance_x = math.abs(end_pos.x - start_pos.x)
-			local distance_y = math.abs(end_pos.y - start_pos.y)
-
+			
+			local length_x = math.pow(end_pos.x - start_pos.x, 2)
+			local length_y = math.pow(end_pos.y - start_pos.y, 2)
+			local length_swipe = math.sqrt(length_x + length_y)
+			
 			if socket.gettime() - start_time >= config.min_swipe_time
-			and distance_x + distance_y >= config.min_swipe_distance then
+			and length_swipe >= config.min_swipe_distance then
 
 				go.delete()
 				spawn_particles.bubles(self)

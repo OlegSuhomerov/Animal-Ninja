@@ -66,6 +66,18 @@ images {
   image: "/assests/sprites_go/wolf.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assests/sprites_gui/heart.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assests/sprites_gui/Animal-Ninja.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assests/sprites_gui/popup_restart.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "fire_particle"
   images {

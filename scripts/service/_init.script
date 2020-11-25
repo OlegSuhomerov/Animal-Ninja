@@ -1,3 +1,18 @@
 
 math.randomseed(socket.gettime())
 math.random(100)
+
+local loader_scenes = require('scripts.modules.loader_scenes')
+local game_components = require('scripts.start_modules.game_components')
+local game_messages = require('scripts.start_modules.game_messages')
+local scenes = require('scripts.start_modules.scenes')
+
+function init(self)
+	msg.post(game_components.myself, game_messages.show_start_scenes)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash(game_messages.show_start_scenes) then
+		loader_scenes.show_scene(scenes.start_scene)
+	end
+end
