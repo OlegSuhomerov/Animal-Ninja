@@ -5,13 +5,14 @@ local gui_constants = require('scripts.start_modules.gui_constants')
 local game_components = require('scripts.start_modules.game_components')
 local scenes = require('scripts.start_modules.scenes')
 local loader_scenes = require('scripts.modules.loader_scenes')
+local go_constants = require('scripts.start_modules.go_constants')
 
-local function create_hearts()
+local function create_hearts(self)
 	
 	local start_pos_x = config.start_pos_hearts.x 
 	local pos_spawn_hearts = vmath.vector3(config.start_pos_hearts.x, config.start_pos_hearts.y, 0)
 
-	for i = 1, config.count_hearts do
+	for i = 1, self.count_hearts do
 		
 		local node = gui.new_box_node(pos_spawn_hearts,config.size_heart)
 		gui_constants.arr_hearts[i] = node
@@ -31,29 +32,26 @@ local function create_hearts()
 	end
 end
 
-local function restart_game()
-	msg.post(game_components.restart_level, game_messages.reset_level)
-end
-
 local function delete_heart(node)
 	gui.set_enabled(node, false)
 end
 
-local function check_lose()
+local function check_lose(self)
 	
-	if config.count_hearts > 0 then
+	if self.count_hearts > 0 then
 		local node = gui_constants.arr_hearts[#gui_constants.arr_hearts]
-		config.count_hearts = config.count_hearts - 1
+		self.count_hearts = self.count_hearts - 1
 		gui_constants.arr_hearts[#gui_constants.arr_hearts] = nil
 		
 		gui.animate(node, game_messages.scale, 0.1, gui.EASING_LINEAR, 0.3, 0, function()
 				delete_heart(node) 
 			end, gui.PLAYBACK_ONCE_FORWARD)
 			
-		if config.count_hearts == 0 then
+		if self.count_hearts == 0 then
 			loader_scenes.show_scene(scenes.popup_restart)
-			restart_game()
-			config.count_hearts = config.count_hearts - 1
+			go_constants.level_play = false
+			gui_constants.score_in_popup = self.update_score
+			self.count_hearts = self.count_hearts - 1
 		end
 	end
 end
@@ -80,8 +78,8 @@ local function show_score_increase(message)
 end
 
 function init(self)
+	msg.post(game_components.myself, game_messages.restart_data)
 	self.update_score = 0
-	create_hearts()
 end
 
 function update(self, dt)
@@ -95,10 +93,12 @@ function on_message(self, message_id, message, sender)
 		show_score_increase(message)
 	end
 	if message_id == game_messages.reduce_lives then
-		check_lose()
+		check_lose(self)
 	end
 	if message_id == game_messages.restart_data then
-		create_hearts()
+		self.count_hearts = config.count_hearts
+		go_constants.level_play = true
+		create_hearts(self)
 		delete_score(self)
 	end
 end

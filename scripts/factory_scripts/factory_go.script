@@ -35,6 +35,7 @@ end
 function init(self)
 	self.time = 0
 	self.count_created = 0
+	go_constants.group_number = 1
 end
 
 function update(self, dt)
@@ -59,7 +60,7 @@ function update(self, dt)
 	end
 	
 	while config.respawn_time/self.time <= 1 
-	and self.count_created ~= arr_group_go[group_number] 
+	and self.count_created < arr_group_go[group_number] 
 	and go_constants.level_play do
 
 		self.time = 0 

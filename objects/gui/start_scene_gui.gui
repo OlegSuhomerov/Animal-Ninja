@@ -156,7 +156,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: ""
-  id: "buttom_start_game"
+  id: "button_start_game"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -230,7 +230,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
-  parent: "buttom_start_game"
+  parent: "button_start_game"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
