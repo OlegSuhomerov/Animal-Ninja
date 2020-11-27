@@ -37,9 +37,7 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	--if message_id == game_messages.transition_show_in then
 		self.transition.handle(message_id, message, sender)
-	--end
 end
 
 function on_input(self, action_id, action)
