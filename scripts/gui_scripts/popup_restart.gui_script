@@ -2,43 +2,34 @@
 local game_components = require('scripts.start_modules.game_components')
 local gui_constants = require('scripts.start_modules.gui_constants')
 local game_messages = require('scripts.start_modules.game_messages')
-local rendercam = require('rendercam.rendercam')
 local scenes = require('scripts.start_modules.scenes')
 local loader_scenes = require('scripts.modules.loader_scenes')
-local calc_pos_button = require('scripts.service.calc_pos_button')
 local record = require('scripts.modules.record')
-
-local function min_max_pos_button(button)
-	local node = gui.get_node(button)
-	local node_popup = gui.get_node(game_components.popup)
-	local shift = gui.get_position(node_popup)
-	local button_center = gui.get_position(node) + shift
-
-	local min_button = calc_pos_button.min(gui_constants.button_popup_width, gui_constants.button_popup_hight, button_center)
-	local max_button = calc_pos_button.max(gui_constants.button_popup_width, gui_constants.button_popup_hight, button_center)
-	
-	return min_button, max_button
-end
-
-local function button_hit_check(self, action, min_pos, max_pos)
-	action_pos = rendercam.screen_to_world_2d(action.screen_x, action.screen_y, false)
-	if action_pos.x > min_pos.x
-	and action_pos.y > min_pos.y
-	and action_pos.x < max_pos.x
-	and action_pos.y < max_pos.y then
-		return true
-	end
-end
+local config = require('scripts.start_modules.config')
+local transitions = require "monarch.transitions.gui"
+local monarch = require "monarch.monarch"
 
 function init(self)
-	msg.post(".", game_messages.acquire_input_focus)
-	
-	self.min_home, self.max_home = min_max_pos_button(game_components.button_home)
-	self.min_restart, self.max_restart = min_max_pos_button(game_components.button_restart)
 
+	self.transition = transitions.create(gui.get_node("popup"))
+	.show_in(transitions.slide_in_bottom, gui.EASING_OUTQUAD, 0.6, 1.5)
+	.show_out(transitions.slide_out_bottom, gui.EASING_INQUAD, 0.6, 0.5)
+	.back_in(transitions.slide_in_left, gui.EASING_OUTQUAD, 0.6, 0)
+	.back_out(transitions.slide_out_right, gui.EASING_INQUAD, 0.6, 0)
+	
+	msg.post(".", game_messages.acquire_input_focus)
+	self.play_animation = false
 	local node = gui.get_node(game_components.score_popup)
 	gui.set_text(node, gui_constants.score_in_popup)
-	--record.check()
+
+	local node = gui.get_node(game_components.new_record)
+	
+	if record.check() then
+		gui.set_enabled(node, true)
+	else
+		gui.set_enabled(node, false)
+	end
+	
 end
 
 function update(self, dt)
@@ -46,19 +37,35 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-
+	--if message_id == game_messages.transition_show_in then
+		self.transition.handle(message_id, message, sender)
+	--end
 end
 
 function on_input(self, action_id, action)
+	local node_home = gui.get_node(game_components.button_home)
+	local node_restart =gui.get_node(game_components.button_restart)
+	
 	if action_id == game_messages.touch then
-		if button_hit_check(self, action, self.min_home, self.max_home) then
+		if gui.pick_node(node_home, action.x, action.y) and action.released then
+
+			if self.play_animation == false then
+				self.play_animation = true
+				gui.animate(node_home, game_messages.scale, 0, gui.PLAYBACK_LOOP_FORWARD, 0.7, 0, function()
+					loader_scenes.show_scene(scenes.start_scene)
+					loader_scenes.hide_scene(scenes.popup_restart)
+				end)
+			end
 		
-			loader_scenes.show_scene(scenes.start_scene)
-			loader_scenes.hide_scene(scenes.popup_restart)
-		elseif button_hit_check(self, action, self.min_restart, self.max_restart) then
-			
-			msg.post(game_components.restart_level, game_messages.reset_level)
-			loader_scenes.hide_scene(scenes.popup_restart)
+		elseif gui.pick_node(node_restart, action.x, action.y) and action.released then
+
+			if self.play_animation == false then
+				self.play_animation = true
+				gui.animate(node_restart, game_messages.scale, 0, gui.PLAYBACK_LOOP_FORWARD, 0.7, 0, function()
+					msg.post(game_components.restart_level, game_messages.reset_level)
+					loader_scenes.hide_scene(scenes.popup_restart)
+				end)
+			end
 		end
 	end
 end
