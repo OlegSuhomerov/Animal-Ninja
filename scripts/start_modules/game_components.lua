@@ -19,5 +19,9 @@ game_components.score_popup = 'total_score'
 game_components.myself = '#'
 game_components.new_record = 'new_record'
 game_components.record_score = 'record_score'
+game_components.record_count = 'record_count'
+game_components.button = 'button'
+game_components.but_home = 'but_home'
+game_components.but_restart = 'but_restart'
 
 return game_components

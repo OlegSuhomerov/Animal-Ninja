@@ -21,6 +21,7 @@ config.size_heart = vmath.vector3(60,53.0,0)
 config.space_hearts_x = 90
 config.space_hearts_y = 90
 config.score_for_one = 100
+config.total_time_score = 0.2
 
 --Color
 config.brown = vmath.vector4(0.61, 0.27, 0, 1)
@@ -28,6 +29,7 @@ config.white = vmath.vector4(1, 1, 1, 1)
 config.gray = vmath.vector4(0.5, 0.5, 0.5, 1)
 config.yellow = vmath.vector4(1, 0.92, 0.016, 1)
 config.pink = vmath.vector4(1, 0.6, 1, 1)
+config.gray = vmath.vector4(0.2, 0.2, 0.2, 2)
 
 config.arr_colors_sprites = {
 	config.brown, 

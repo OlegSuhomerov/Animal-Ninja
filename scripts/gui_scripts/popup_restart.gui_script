@@ -6,16 +6,17 @@ local scenes = require('scripts.start_modules.scenes')
 local loader_scenes = require('scripts.modules.loader_scenes')
 local record = require('scripts.modules.record')
 local config = require('scripts.start_modules.config')
-local transitions = require "monarch.transitions.gui"
-local monarch = require "monarch.monarch"
+local transitions = require("monarch.transitions.gui")
+local monarch = require("monarch.monarch")
+local config = require('scripts.start_modules.config')
 
 function init(self)
 
 	self.transition = transitions.create(gui.get_node("popup"))
-	.show_in(transitions.slide_in_bottom, gui.EASING_OUTQUAD, 0.6, 1.5)
-	.show_out(transitions.slide_out_bottom, gui.EASING_INQUAD, 0.6, 0.5)
-	.back_in(transitions.slide_in_left, gui.EASING_OUTQUAD, 0.6, 0)
-	.back_out(transitions.slide_out_right, gui.EASING_INQUAD, 0.6, 0)
+	.show_in(transitions.slide_in_bottom, gui.EASING_INOUTELASTIC, 4, 0.5)
+	.show_out(transitions.slide_out_bottom, gui.EASING_INOUTELASTIC, 4, 0.5)
+	.back_in(transitions.slide_in_top, gui.EASING_INSINE, 1, 0.0)
+	.back_out(transitions.slide_out_top, gui.EASING_INSINE, 1, 0.0)
 	
 	msg.post(".", game_messages.acquire_input_focus)
 	self.play_animation = false
@@ -29,7 +30,10 @@ function init(self)
 	else
 		gui.set_enabled(node, false)
 	end
-	
+
+	local node_but_home = gui.get_node(game_components.but_home)
+	self.start_color = gui.get_color(node_but_home)
+
 end
 
 function update(self, dt)
@@ -42,28 +46,41 @@ end
 
 function on_input(self, action_id, action)
 	local node_home = gui.get_node(game_components.button_home)
-	local node_restart =gui.get_node(game_components.button_restart)
+	local node_restart = gui.get_node(game_components.button_restart)
+	local node_but_home = gui.get_node(game_components.but_home)
+	local node_but_restart = gui.get_node(game_components.but_restart)
 	
-	if action_id == game_messages.touch then
-		if gui.pick_node(node_home, action.x, action.y) and action.released then
+	if action_id == game_messages.touch and gui.pick_node(node_home, action.x, action.y) then
 
-			if self.play_animation == false then
-				self.play_animation = true
-				gui.animate(node_home, game_messages.scale, 0, gui.PLAYBACK_LOOP_FORWARD, 0.7, 0, function()
-					loader_scenes.show_scene(scenes.start_scene)
-					loader_scenes.hide_scene(scenes.popup_restart)
-				end)
-			end
+		gui.set_color(node_but_home, config.gray)
 		
-		elseif gui.pick_node(node_restart, action.x, action.y) and action.released then
+	elseif action_id == game_messages.touch and gui.pick_node(node_restart, action.x, action.y) then
 
-			if self.play_animation == false then
-				self.play_animation = true
-				gui.animate(node_restart, game_messages.scale, 0, gui.PLAYBACK_LOOP_FORWARD, 0.7, 0, function()
-					msg.post(game_components.restart_level, game_messages.reset_level)
-					loader_scenes.hide_scene(scenes.popup_restart)
-				end)
-			end
+		gui.set_color(node_but_restart, config.gray)
+		
+	end
+	if gui.pick_node(node_home, action.x, action.y) and action.released then
+
+		gui.set_color(node_but_home, self.start_color)
+		
+		if self.play_animation == false then
+			self.play_animation = true
+			gui.animate(node_home, game_messages.scale, 0, gui.PLAYBACK_LOOP_FORWARD, 0.7, 0, function()
+				loader_scenes.show_scene(scenes.start_scene)
+				loader_scenes.hide_scene(scenes.popup_restart)
+			end)
+		end
+	
+	elseif gui.pick_node(node_restart, action.x, action.y) and action.released then
+
+		gui.set_color(node_but_restart, self.start_color)
+		
+		if self.play_animation == false then
+			self.play_animation = true
+			gui.animate(node_restart, game_messages.scale, 0, gui.PLAYBACK_LOOP_FORWARD, 0.7, 0, function()
+				msg.post(game_components.restart_level, game_messages.reset_level)
+				loader_scenes.hide_scene(scenes.popup_restart)
+			end)
 		end
 	end
 end

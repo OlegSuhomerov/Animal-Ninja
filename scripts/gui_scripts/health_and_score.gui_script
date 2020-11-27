@@ -6,6 +6,7 @@ local game_components = require('scripts.start_modules.game_components')
 local scenes = require('scripts.start_modules.scenes')
 local loader_scenes = require('scripts.modules.loader_scenes')
 local go_constants = require('scripts.start_modules.go_constants')
+local record = require('scripts.modules.record')
 
 local function create_hearts(self)
 	
@@ -57,11 +58,35 @@ local function check_lose(self)
 end
 
 local function animation_score(self)
-	if self.update_score > gui_constants.start_score then
-		gui_constants.start_score = gui_constants.start_score + self.growth_rate
+	local node = gui.get_node(game_components.label_score)
+	local node_record = gui.get_node(game_components.record_count)
 
-		local node = gui.get_node(game_components.label_score)
-		gui.set_text(node, gui_constants.start_score)
+	if self.update_score > gui_constants.start_score then
+		self.current_time = 0
+		local total_time = config.total_time_score
+		local update_score = gui_constants.start_score
+		local score_difference = self.update_score - update_score
+		local timer_id = timer.delay(0.0, true, function(self, timer_id)
+
+			local time = self.current_time / total_time
+			
+			gui_constants.start_score = update_score + math.modf(score_difference * time)
+			
+			if gui_constants.start_score > self.update_score then
+				gui_constants.start_score = self.update_score
+				timer.cancel(timer_id)
+			end
+			
+			if self.record < gui_constants.start_score then
+				gui.set_text(node_record, gui_constants.start_score)
+			end
+			
+			gui.set_text(node, gui_constants.start_score)
+			
+			if self.update_score <= gui_constants.start_score then 
+				timer.cancel(timer_id)
+			end
+		end)
 	end
 end
 
@@ -80,10 +105,15 @@ end
 function init(self)
 	msg.post(game_components.myself, game_messages.restart_data)
 	self.update_score = 0
+	self.current_time = 0
+	
+	local node = gui.get_node(game_components.record_count)
+	self.record = record.show()
+	gui.set_text(node, self.record)
 end
 
 function update(self, dt)
-	animation_score(self)
+	self.current_time = self.current_time + dt
 end
 
 function on_message(self, message_id, message, sender)
@@ -91,6 +121,7 @@ function on_message(self, message_id, message, sender)
 		self.update_score = self.update_score + config.arr_sprites[message.num_sprite].price
 		self.growth_rate = (self.update_score - gui_constants.start_score) / 10
 		show_score_increase(message)
+		animation_score(self)
 	end
 	if message_id == game_messages.reduce_lives then
 		check_lose(self)
