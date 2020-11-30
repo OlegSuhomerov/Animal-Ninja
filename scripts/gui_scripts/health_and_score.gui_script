@@ -8,7 +8,7 @@ local loader_scenes = require('scripts.modules.loader_scenes')
 local go_constants = require('scripts.start_modules.go_constants')
 local record = require('scripts.modules.record')
 
-local function create_hearts(self)
+local function create_hearts(self, count_create_hearts)
 	
 	local start_pos_x = config.start_pos_hearts.x 
 	local pos_spawn_hearts = vmath.vector3(config.start_pos_hearts.x, config.start_pos_hearts.y, 0)
@@ -17,7 +17,7 @@ local function create_hearts(self)
 		
 		local node = gui.new_box_node(pos_spawn_hearts,config.size_heart)
 		gui_constants.arr_hearts[i] = node
-		
+
 		gui.set_texture(node, game_components.atlas_gaming_level)
 		gui.play_flipbook(node, game_components.heart)
 		gui.set_xanchor(node, gui_constants.anchor_right)
@@ -33,6 +33,19 @@ local function create_hearts(self)
 	end
 end
 
+local function restore_heart(self)
+	local node = gui_constants.arr_hearts[self.count_hearts]
+	gui.set_enabled(node, true)
+	gui.animate(node, game_messages.scale, 1, gui.EASING_LINEAR, 0.3, 0, function()
+		for i = 1, self.count_hearts do
+			local node = gui_constants.arr_hearts[i]
+			gui.cancel_animation(node, game_messages.scale)
+			gui.animate(node, game_messages.scale, 1.3, gui.EASING_LINEAR, 2, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+		end
+	end)
+	config.arr_sprites[config.id_bonus].weight = config.arr_sprites[config.id_bonus].weight - config.increase_chance_bonus_one
+end
+
 local function delete_heart(node)
 	gui.set_enabled(node, false)
 end
@@ -40,11 +53,12 @@ end
 local function check_lose(self)
 	
 	if self.count_hearts > 0 then
-		local node = gui_constants.arr_hearts[#gui_constants.arr_hearts]
+		local node = gui_constants.arr_hearts[self.count_hearts]
 		self.count_hearts = self.count_hearts - 1
-		gui_constants.arr_hearts[#gui_constants.arr_hearts] = nil
-		
-		gui.animate(node, game_messages.scale, 0.1, gui.EASING_LINEAR, 0.3, 0, function()
+	
+		config.arr_sprites[config.id_bonus].weight = config.arr_sprites[config.id_bonus].weight + config.increase_chance_bonus_one
+
+		gui.animate(node, game_messages.scale, 0.0, gui.EASING_LINEAR, 0.3, 0, function()
 				delete_heart(node) 
 			end, gui.PLAYBACK_ONCE_FORWARD)
 			
@@ -105,6 +119,7 @@ end
 function init(self)
 	msg.post(game_components.myself, game_messages.restart_data)
 	self.update_score = 0
+	config.arr_sprites[config.id_bonus].weight = 0
 	self.current_time = 0
 	
 	local node = gui.get_node(game_components.record_count)
@@ -129,8 +144,14 @@ function on_message(self, message_id, message, sender)
 	if message_id == game_messages.restart_data then
 		self.count_hearts = config.count_hearts
 		go_constants.level_play = true
-		create_hearts(self)
+		create_hearts(self, self.count_hearts)
 		delete_score(self)
+	end
+	if message_id == game_messages.add_heart then
+		if self.count_hearts < config.count_hearts then
+			self.count_hearts = self.count_hearts + 1
+			restore_heart(self)
+		end
 	end
 end
 

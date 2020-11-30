@@ -56,6 +56,11 @@ function input.swipe(self, action_id, action)
 					msg.post(game_components.gui, game_messages.reduce_lives)
 					return
 				end
+
+				if config.arr_sprites[self.num_rand_sprite].bonus then
+					msg.post(game_components.gui, game_messages.add_heart)
+					return
+				end
 				
 				msg.post(game_components.gui, game_messages.change_score, {num_sprite = self.num_rand_sprite, death_pos = self.pos})
 			end

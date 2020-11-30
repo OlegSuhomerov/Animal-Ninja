@@ -23,5 +23,6 @@ game_messages.restart_data = hash("restart_data")
 game_messages.change_score = hash("change_score")
 game_messages.show_start_scenes = hash("show_start_scenes")
 game_messages.transition_show_in = hash("transition_show_in")
+game_messages.add_heart = hash("add_heart")
 
 return game_messages

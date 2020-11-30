@@ -21,6 +21,7 @@ local function returning_original_data(self)
 	config.arr_group_go = self.arr_group_go
 	config.count_hearts = self.count_hearts
 	go_constants.group_number = self.group_number
+	config.arr_sprites[config.id_bonus].weight = 0
 	go_constants.level_play = true
 end
 

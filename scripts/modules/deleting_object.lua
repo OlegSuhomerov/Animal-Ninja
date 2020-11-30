@@ -18,10 +18,9 @@ function deleting_object.frame_check(self)
 	then
 		go.delete()
 		
-		if config.arr_sprites[self.num_rand_sprite].bomb then
+		if config.arr_sprites[self.num_rand_sprite].bomb or config.arr_sprites[self.num_rand_sprite].bonus then
 			return
 		end
-		
 		msg.post(game_components.gui, game_messages.reduce_lives)
 	end
 end

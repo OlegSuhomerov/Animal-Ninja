@@ -22,6 +22,9 @@ config.space_hearts_x = 90
 config.space_hearts_y = 90
 config.score_for_one = 100
 config.total_time_score = 0.2
+config.bust_bonus = 1.5
+config.id_bonus = 14
+config.increase_chance_bonus_one = 1
 
 --Color
 config.brown = vmath.vector4(0.61, 0.27, 0, 1)
@@ -30,6 +33,7 @@ config.gray = vmath.vector4(0.5, 0.5, 0.5, 1)
 config.yellow = vmath.vector4(1, 0.92, 0.016, 1)
 config.pink = vmath.vector4(1, 0.6, 1, 1)
 config.black = vmath.vector4(0, 0, 0, 1)
+config.red = vmath.vector4(1, 0, 0, 1)
 config.blackout = 0.65
 
 config.arr_colors_sprites = {
@@ -46,6 +50,7 @@ config.arr_colors_sprites = {
 	config.pink, 
 	config.gray, 
 	config.yellow,
+	config.red,
 	config.black
 }
 
@@ -58,20 +63,21 @@ config.param_start_animate = {
 }
 
 config.arr_sprites = {
-	{weight = 2, sprite = "bear", price = 120},
-	{weight = 2, sprite = "cow", price = 80},
-	{weight = 2, sprite = "chicken", price = 30},
-	{weight = 2, sprite = "elephant", price = 130},
-	{weight = 2, sprite = "wolf", price = 100},
-	{weight = 2, sprite = "bird", price = 70},
-	{weight = 2, sprite = "elk", price = 110},
-	{weight = 2, sprite = "monkey", price = 90},
-	{weight = 2, sprite = "goat", price = 50},
-	{weight = 2, sprite = "panda", price = 150},
-	{weight = 2, sprite = "pig", price = 60},
-	{weight = 2, sprite = "rabbit", price = 40},
-	{weight = 2, sprite = "giraffe", price = 140},
-	{weight = 5, sprite = "bomb", bomb = true}
+	{weight = 4, sprite = "bear", price = 120},
+	{weight = 4, sprite = "cow", price = 80},
+	{weight = 4, sprite = "chicken", price = 30},
+	{weight = 4, sprite = "elephant", price = 130},
+	{weight = 4, sprite = "wolf", price = 100},
+	{weight = 4, sprite = "bird", price = 70},
+	{weight = 4, sprite = "elk", price = 110},
+	{weight = 4, sprite = "monkey", price = 90},
+	{weight = 4, sprite = "goat", price = 50},
+	{weight = 4, sprite = "panda", price = 150},
+	{weight = 4, sprite = "pig", price = 60},
+	{weight = 4, sprite = "rabbit", price = 40},
+	{weight = 4, sprite = "giraffe", price = 140},
+	{weight = 0, sprite = "bonus", bonus = true},
+	{weight = 8, sprite = "bomb", bomb = true}
 }
 
 config.spawn_from_data = {
@@ -117,12 +123,6 @@ config.spawn_from_data = {
 		starting_angle = {min = 175, max = 195},
 		starting_speed = {min = 300, max = 800},
 	},
-}
-
-config.arr_gui_hearts = {
-	"heart_3",
-	"heart_2",
-	"heart_1"
 }
 
 config.arr_bg = {

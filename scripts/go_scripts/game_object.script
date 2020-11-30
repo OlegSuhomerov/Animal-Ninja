@@ -8,6 +8,12 @@ local input = require("scripts.modules.input")
 local deleting_object = require("scripts.modules.deleting_object")
 local selecting_animation = require("scripts.modules.selecting_animation")
 
+local function check_bonus(self)
+	if config.arr_sprites[self.num_rand_sprite].bonus then
+		self.starting_speed = go_constants.starting_speed * config.bust_bonus
+	end
+end
+
 local function update_object_position(self, dt)
 
 	self.time = self.time + dt
@@ -32,6 +38,7 @@ function init(self)
 	self.starting_angle = go_constants.starting_angle
 	self.starting_speed = go_constants.starting_speed
 	self.sprite_size = go.get(game_components.sprite_go, game_messages.size)
+	check_bonus(self)
 end
 
 function final(self)
