@@ -175,7 +175,7 @@ embedded_instances {
   id: "gui"
   data: "components {\n"
   "  id: \"gui_game_level\"\n"
-  "  component: \"/objects/gui/gui_game_level.gui\"\n"
+  "  component: \"/scenes/gui/gui_game_level.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -211,6 +211,41 @@ embedded_instances {
   data: "components {\n"
   "  id: \"restart_level\"\n"
   "  component: \"/scripts/update_level/restart_level.script\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "fade"
+  data: "components {\n"
+  "  id: \"feade_gui_scene\"\n"
+  "  component: \"/scenes/gui/feade_gui_scene.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

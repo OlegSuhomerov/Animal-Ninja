@@ -71,11 +71,11 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assests/sprites_gui/Animal-Ninja.png"
+  image: "/assests/sprites_gui/popup_restart.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assests/sprites_gui/popup_restart.png"
+  image: "/assests/sprites_go/bomb.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 animations {

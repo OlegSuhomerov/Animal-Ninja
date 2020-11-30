@@ -17,6 +17,11 @@ function deleting_object.frame_check(self)
 	or self.pos.x > right_top_angle.x + space_x 
 	then
 		go.delete()
+		
+		if config.arr_sprites[self.num_rand_sprite].bomb then
+			return
+		end
+		
 		msg.post(game_components.gui, game_messages.reduce_lives)
 	end
 end

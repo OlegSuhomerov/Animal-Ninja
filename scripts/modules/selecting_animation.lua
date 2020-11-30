@@ -8,8 +8,9 @@ local selecting_animation = {}
 
 function selecting_animation.random_sprite(self)
 
-	self.num_rand_sprite = math.random(config.count_sprite)
 
+	self.num_rand_sprite = random_sampling.based_weights(config.arr_sprites)
+	
 	msg.post(game_components.sprite_go,game_messages.play_animation, {id = hash(config.arr_sprites[self.num_rand_sprite].sprite)})
 
 end

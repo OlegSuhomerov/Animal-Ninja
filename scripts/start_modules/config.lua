@@ -29,7 +29,8 @@ config.white = vmath.vector4(1, 1, 1, 1)
 config.gray = vmath.vector4(0.5, 0.5, 0.5, 1)
 config.yellow = vmath.vector4(1, 0.92, 0.016, 1)
 config.pink = vmath.vector4(1, 0.6, 1, 1)
-config.gray = vmath.vector4(0.2, 0.2, 0.2, 2)
+config.black = vmath.vector4(0, 0, 0, 1)
+config.blackout = 0.65
 
 config.arr_colors_sprites = {
 	config.brown, 
@@ -44,7 +45,8 @@ config.arr_colors_sprites = {
 	config.white, 
 	config.pink, 
 	config.gray, 
-	config.yellow
+	config.yellow,
+	config.black
 }
 
 config.param_start_animate = {
@@ -56,19 +58,20 @@ config.param_start_animate = {
 }
 
 config.arr_sprites = {
-	{sprite = "bear", price = 120},
-	{sprite = "cow", price = 80},
-	{sprite = "chicken", price = 30},
-	{sprite = "elephant", price = 130},
-	{sprite = "wolf", price = 100},
-	{sprite = "bird", price = 70},
-	{sprite = "elk", price = 110},
-	{sprite = "monkey", price = 90},
-	{sprite = "goat", price = 50},
-	{sprite = "panda", price = 150},
-	{sprite = "pig", price = 60},
-	{sprite = "rabbit", price = 40},
-	{sprite = "giraffe", price = 140}
+	{weight = 2, sprite = "bear", price = 120},
+	{weight = 2, sprite = "cow", price = 80},
+	{weight = 2, sprite = "chicken", price = 30},
+	{weight = 2, sprite = "elephant", price = 130},
+	{weight = 2, sprite = "wolf", price = 100},
+	{weight = 2, sprite = "bird", price = 70},
+	{weight = 2, sprite = "elk", price = 110},
+	{weight = 2, sprite = "monkey", price = 90},
+	{weight = 2, sprite = "goat", price = 50},
+	{weight = 2, sprite = "panda", price = 150},
+	{weight = 2, sprite = "pig", price = 60},
+	{weight = 2, sprite = "rabbit", price = 40},
+	{weight = 2, sprite = "giraffe", price = 140},
+	{weight = 5, sprite = "bomb", bomb = true}
 }
 
 config.spawn_from_data = {
